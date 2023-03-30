@@ -11,13 +11,15 @@ type Client struct {
 	mclient     *mongo.Client
 	mdb         *mongo.Database
 	retryPolicy *RetryPolicy
+	errsToSkip  []error
 }
 
-func NewClient(mclient *mongo.Client, mdb *mongo.Database, retrypolicy *RetryPolicy) *Client {
+func NewClient(mclient *mongo.Client, mdb *mongo.Database, retrypolicy *RetryPolicy, errsToSkip []error) *Client {
 	return &Client{
 		mclient,
 		mdb,
 		retrypolicy,
+		errsToSkip,
 	}
 }
 
@@ -49,7 +51,9 @@ func (c *Client) Find(
 				filter,
 				opts...,
 			)
-		})
+		},
+		c.errsToSkip,
+	)
 	return result, err
 }
 
@@ -70,7 +74,9 @@ func (c *Client) FindOne(
 				opts...,
 			)
 			return res, res.Err()
-		})
+		},
+		c.errsToSkip,
+	)
 	return result, err
 }
 
@@ -90,7 +96,9 @@ func (c *Client) InsertOne(
 				document,
 				opts...,
 			)
-		})
+		},
+		c.errsToSkip,
+	)
 	return result, err
 }
 
@@ -110,7 +118,9 @@ func (c *Client) InsertMany(
 				documents,
 				opts...,
 			)
-		})
+		},
+		c.errsToSkip,
+	)
 	return result, err
 }
 
@@ -132,7 +142,9 @@ func (c *Client) UpdateOne(
 				update,
 				opts...,
 			)
-		})
+		},
+		c.errsToSkip,
+	)
 	return result, err
 }
 
@@ -154,7 +166,9 @@ func (c *Client) UpdateMany(
 				update,
 				opts...,
 			)
-		})
+		},
+		c.errsToSkip,
+	)
 	return result, err
 }
 
@@ -174,7 +188,9 @@ func (c *Client) DeleteOne(
 				filter,
 				opts...,
 			)
-		})
+		},
+		c.errsToSkip,
+	)
 	return result, err
 }
 
@@ -194,7 +210,9 @@ func (c *Client) DeleteMany(
 				filter,
 				opts...,
 			)
-		})
+		},
+		c.errsToSkip,
+	)
 	return result, err
 }
 
@@ -214,6 +232,8 @@ func (c *Client) Aggregate(
 				pipeline,
 				opts...,
 			)
-		})
+		},
+		c.errsToSkip,
+	)
 	return result, err
 }
