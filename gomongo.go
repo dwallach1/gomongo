@@ -7,25 +7,33 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type client struct {
+type Client struct {
 	mclient     *mongo.Client
 	mdb         *mongo.Database
 	retryPolicy *RetryPolicy
 }
 
-func NewClient(mclient *mongo.Client, mdb *mongo.Database, retrypolicy *RetryPolicy) *client {
-	return &client{
+func NewClient(mclient *mongo.Client, mdb *mongo.Database, retrypolicy *RetryPolicy) *Client {
+	return &Client{
 		mclient,
 		mdb,
 		retrypolicy,
 	}
 }
 
-func (c *client) SetRetryPolicy(retryPolicy *RetryPolicy) {
+func (c *Client) Client() *mongo.Client {
+	return c.mclient
+}
+
+func (c *Client) DB() *mongo.Database {
+	return c.mdb
+}
+
+func (c *Client) SetRetryPolicy(retryPolicy *RetryPolicy) {
 	c.retryPolicy = retryPolicy
 }
 
-func (c *client) Find(
+func (c *Client) Find(
 	l Logger,
 	ctx context.Context,
 	collection string,
@@ -45,7 +53,7 @@ func (c *client) Find(
 	return result, err
 }
 
-func (c *client) FindOne(
+func (c *Client) FindOne(
 	l Logger,
 	ctx context.Context,
 	collection string,
@@ -66,7 +74,7 @@ func (c *client) FindOne(
 	return result, err
 }
 
-func (c *client) InsertOne(
+func (c *Client) InsertOne(
 	l Logger,
 	ctx context.Context,
 	collection string,
@@ -86,7 +94,7 @@ func (c *client) InsertOne(
 	return result, err
 }
 
-func (c *client) InsertMany(
+func (c *Client) InsertMany(
 	l Logger,
 	ctx context.Context,
 	collection string,
@@ -106,7 +114,7 @@ func (c *client) InsertMany(
 	return result, err
 }
 
-func (c *client) UpdateOne(
+func (c *Client) UpdateOne(
 	l Logger,
 	ctx context.Context,
 	collection string,
@@ -128,7 +136,7 @@ func (c *client) UpdateOne(
 	return result, err
 }
 
-func (c *client) UpdateMany(
+func (c *Client) UpdateMany(
 	l Logger,
 	ctx context.Context,
 	collection string,
@@ -150,7 +158,7 @@ func (c *client) UpdateMany(
 	return result, err
 }
 
-func (c *client) DeleteOne(
+func (c *Client) DeleteOne(
 	l Logger,
 	ctx context.Context,
 	collection string,
@@ -170,7 +178,7 @@ func (c *client) DeleteOne(
 	return result, err
 }
 
-func (c *client) DeleteMany(
+func (c *Client) DeleteMany(
 	l Logger,
 	ctx context.Context,
 	collection string,
@@ -190,7 +198,7 @@ func (c *client) DeleteMany(
 	return result, err
 }
 
-func (c *client) Aggregate(
+func (c *Client) Aggregate(
 	l Logger,
 	ctx context.Context,
 	collection string,
