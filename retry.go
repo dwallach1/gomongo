@@ -22,5 +22,5 @@ func retryable[T any](l Logger, retries int, waittime func(int) time.Duration, f
 		}
 		return result, nil
 	}
-	return result, fmt.Errorf("failed after %v retries", retries)
+	return result, fmt.Errorf("max retries exceeded: %w", err)
 }
